@@ -1,0 +1,35 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Minimal.Api.Domain.Entity;
+
+namespace Minimal.Api.Infra.Db
+{
+    public class AppDbContext : DbContext
+    {
+        private readonly IConfiguration _configuration;
+        public AppDbContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        public DbSet<Admin> Admins { get; set; } = default!;
+
+        public DbSet<Vehicle> Vehicles { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Admin>().HasData(
+                new Admin { Id = 1, Email = "admin@example.com", Password = "admin123", Rule = "Admin" }
+            );
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var connectionString = _configuration.GetConnectionString("DefaultConnection")?.ToString();
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            }
+           
+        }
+    }
+
+}
