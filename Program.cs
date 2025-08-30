@@ -1,11 +1,20 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Minimal.Api.Domain.Interfaces;
+using Minimal.Api.Domain.ModelViews;
 using Minimal.Api.Domain.Service;
 using Minimal.Api.Infra.Db;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services
+    .AddScoped<IAdminService, AdminService>()
+    .AddScoped<IVehicleService, VehicleService>();
+
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen()
+    .AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -16,6 +25,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapControllers();
+
+app.MapGet("/", () => Results.Json(new Home()));
 
 app.Run();
