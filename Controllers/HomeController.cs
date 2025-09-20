@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Minimal.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [SwaggerTag("Home")]
     public class HomeController : ControllerBase
     {
         // Health check endpoint

@@ -1,6 +1,7 @@
 ﻿using Minimal.Api.Domain.Dto;
 using Minimal.Api.Domain.Entity;
 using Minimal.Api.Domain.Interfaces;
+using Minimal.Api.Domain.ModelViews;
 using Minimal.Api.Infra.Db;
 
 namespace Minimal.Api.Domain.Service
@@ -12,10 +13,41 @@ namespace Minimal.Api.Domain.Service
         {
             _context = context;
         }
-        public Admin? Login(LoginDto loginDto)
+
+        public Admin Add(Admin admin)
         {
-            var admin = _context.Admins.SingleOrDefault(a => a.Email == loginDto.Email && a.Password == loginDto.Password);
+            _context.Admins.Add(admin);
+            _context.SaveChanges();
             return admin;
+        }
+
+        public List<Admin> GetAll(int? page)
+        {
+           var query = _context.Admins.AsQueryable();
+            if (page.HasValue && page > 0)
+            {
+                int pageSize = 10;
+                int skip = (page.Value - 1) * pageSize;
+                query = query.Skip(skip).Take(pageSize);
+            }
+            return query.ToList();
+        }
+
+        public Admin? GetById(int id)
+        {
+            var admin = _context.Admins.Find(id);
+            return admin;
+        }
+
+        public Admin? Login(Admin admin)
+        {
+            var adminLogin = _context.Admins.SingleOrDefault(a => a.Email == admin.Email && a.Password == admin.Password);
+            return adminLogin;
+        }
+
+        public Admin? Login(AdminDto adminDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

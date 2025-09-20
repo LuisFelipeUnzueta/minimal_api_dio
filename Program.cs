@@ -13,8 +13,13 @@ builder.Services
 
 builder.Services
     .AddEndpointsApiExplorer()
-    .AddSwaggerGen()
-    .AddControllers();
+    .AddSwaggerGen();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

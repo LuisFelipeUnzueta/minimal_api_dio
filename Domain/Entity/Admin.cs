@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Minimal.Api.Domain.Enuns;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Minimal.Api.Domain.Entity
@@ -19,6 +20,6 @@ namespace Minimal.Api.Domain.Entity
         
         [Required]
         [StringLength(50)]
-        public string Rule { get; set; } = string.Empty;
+        public RuleType Rule { get; set; }
     }
 }

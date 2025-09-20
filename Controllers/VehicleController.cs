@@ -2,11 +2,14 @@
 using Minimal.Api.Domain.Dto;
 using Minimal.Api.Domain.Entity;
 using Minimal.Api.Domain.Interfaces;
+using Minimal.Api.Domain.ModelViews;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Minimal.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [SwaggerTag("Vehicle")]
     public class VehicleController : ControllerBase
     {
         private readonly IVehicleService _vehicleService;
@@ -17,9 +20,10 @@ namespace Minimal.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] int page = 1, [FromQuery] string? name = null, [FromQuery] string? brand = null)
+        public IActionResult GetAll([FromQuery] int? page = 1, [FromQuery] string? name = null, [FromQuery] string? brand = null)
         {
-            var vehicles = _vehicleService.GetAll(page, name, brand);
+            int validPage = page.HasValue && page.Value > 0 ? page.Value : 1;
+            var vehicles = _vehicleService.GetAll(validPage, name, brand);
             return Ok(vehicles);
         }
 
@@ -35,6 +39,11 @@ namespace Minimal.Api.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] VehicleDto dto)
         {
+            var validation = VehicleValidate(dto);
+            
+            if (validation.Messages.Any())
+                return BadRequest(validation);
+
             var vehicle = new Vehicle
             {
                 Name = dto.Name,
@@ -51,6 +60,11 @@ namespace Minimal.Api.Controllers
             var existing = _vehicleService.GetById(id);
             if (existing == null)
                 return NotFound();
+
+            var validation = VehicleValidate(dto);
+
+            if (validation.Messages.Any())
+                return BadRequest(validation);
 
             existing.Name = dto.Name;
             existing.Brand = dto.Brand;
@@ -69,6 +83,20 @@ namespace Minimal.Api.Controllers
 
             _vehicleService.Delete(existing);
             return NoContent();
+        }
+
+        private ValidationErrors VehicleValidate(VehicleDto vehicleDto)
+        {
+            var validation = new ValidationErrors();
+
+            if (string.IsNullOrWhiteSpace(vehicleDto.Name))
+                validation.Messages.Add("Name is required.");
+            if (string.IsNullOrWhiteSpace(vehicleDto.Brand))
+                validation.Messages.Add("Brand is required.");
+            if (vehicleDto.Year <= 1900)
+                validation.Messages.Add("Year must be greater than 1900.");
+
+            return validation;
         }
     }
 }

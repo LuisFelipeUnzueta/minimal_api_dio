@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Minimal.Api.Domain.Entity;
+using Minimal.Api.Domain.Enuns;
 
 namespace Minimal.Api.Infra.Db
 {
@@ -16,8 +17,12 @@ namespace Minimal.Api.Infra.Db
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Admin>()
+                .Property(a => a.Rule)
+                .HasConversion<string>();
+
             modelBuilder.Entity<Admin>().HasData(
-                new Admin { Id = 1, Email = "admin@example.com", Password = "admin123", Rule = "Admin" }
+                new Admin { Id = 1, Email = "admin@example.com", Password = "admin123", Rule = RuleType.Admin }
             );
         }
 
