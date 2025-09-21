@@ -25,12 +25,12 @@ namespace Minimal.Api.Domain.Service
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-            {
-                new Claim("ID", admin.Id.ToString()),
-                new Claim("Email", admin.Email),
-                new Claim(ClaimTypes.Role, admin.Rule.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                {
+                    new Claim("ID", admin.Id.ToString()),
+                    new Claim("Email", admin.Email),
+                    new Claim(ClaimTypes.Role, admin.Role.ToString()), 
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
             var token = new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,

@@ -18,11 +18,11 @@ namespace Minimal.Api.Infra.Db
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Admin>()
-                .Property(a => a.Rule)
+                .Property(a => a.Role)
                 .HasConversion<string>();
 
             modelBuilder.Entity<Admin>().HasData(
-                new Admin { Id = 1, Email = "admin@example.com", Password = "admin123", Rule = RuleType.Admin }
+                new Admin { Id = 1, Email = "admin@example.com", Password = "admin123", Role = RoleType.Admin }
             );
         }
 

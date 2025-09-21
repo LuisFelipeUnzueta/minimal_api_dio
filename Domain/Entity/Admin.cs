@@ -20,6 +20,6 @@ namespace Minimal.Api.Domain.Entity
         
         [Required]
         [StringLength(50)]
-        public RuleType Rule { get; set; }
+        public RoleType Role { get; set; }
     }
 }

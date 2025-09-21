@@ -20,7 +20,7 @@ namespace Minimal.Api.Controllers
             _vehicleService = vehicleService;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin, Employee")]
         [HttpGet]
         public IActionResult GetAll([FromQuery] int? page = 1, [FromQuery] string? name = null, [FromQuery] string? brand = null)
         {
@@ -29,7 +29,7 @@ namespace Minimal.Api.Controllers
             return Ok(vehicles);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin, Employee")]
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -38,8 +38,8 @@ namespace Minimal.Api.Controllers
                 return NotFound();
             return Ok(vehicle);
         }
-        
-        [Authorize]
+
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPost]
         public IActionResult Create([FromBody] VehicleDto dto)
         {
@@ -58,7 +58,7 @@ namespace Minimal.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] VehicleDto dto)
         {
@@ -79,7 +79,7 @@ namespace Minimal.Api.Controllers
             return Ok(updated);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

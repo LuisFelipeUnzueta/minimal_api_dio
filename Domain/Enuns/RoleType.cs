@@ -1,6 +1,6 @@
 ﻿namespace Minimal.Api.Domain.Enuns
 {
-    public enum RuleType
+    public enum RoleType
     {
         Admin,
         Employee

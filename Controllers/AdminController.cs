@@ -41,7 +41,7 @@ namespace Minimal.Api.Controllers
                 {
                     Id = result.Id,
                     Email = result.Email,
-                    Rule = result.Rule.ToString()
+                    Rule = result.Role.ToString()
                 };
                 return Ok(new { AdminResponse = adminResponse, Token = token });
             }
@@ -50,7 +50,7 @@ namespace Minimal.Api.Controllers
                 return Unauthorized(new { message = "Invalid credentials" });
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost("admin")]
         public IActionResult CreateAdmin([FromBody] AdminDto adminDto)
         {
@@ -66,7 +66,7 @@ namespace Minimal.Api.Controllers
             if (validate.Messages.Any())
                 return BadRequest(validate);
 
-            if (!Enum.TryParse<RuleType>(adminDto.Rule, out var rule))
+            if (!Enum.TryParse<RoleType>(adminDto.Rule, out var rule))
             {
                 validate.Messages.Add("Invalid rule type");
                 return BadRequest(validate);
@@ -76,17 +76,17 @@ namespace Minimal.Api.Controllers
             {
                 Email = adminDto.Email,
                 Password = adminDto.Password,
-                Rule = rule
+                Role = rule
             };
 
             var result = _adminService.Add(admin);
-            if (result.Rule == RuleType.Admin)
+            if (result.Role == RoleType.Admin)
                 return Ok(new { message = "Admin created successfully" });
             else
                 return Unauthorized(new { message = "Invalid credentials" });
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("admins")]
         public IActionResult GetAllAdmins([FromQuery] int? page)
         {
@@ -99,7 +99,7 @@ namespace Minimal.Api.Controllers
                 {
                     Id = adm.Id,
                     Email = adm.Email,
-                    Rule = adm.Rule.ToString()
+                    Rule = adm.Role.ToString()
                 });
 
             }
@@ -107,7 +107,7 @@ namespace Minimal.Api.Controllers
             return Ok(adminsResponse);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("admin{id}")]
         public IActionResult GetAdminById(int id)
         {
