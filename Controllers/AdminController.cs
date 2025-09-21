@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Minimal.Api.Domain.Dto;
 using Minimal.Api.Domain.Entity;
 using Minimal.Api.Domain.Enuns;
@@ -14,12 +15,42 @@ namespace Minimal.Api.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
+        private readonly IAuthService _authService;
 
-        public AdminController(IAdminService adminService)
+        public AdminController(IAdminService adminService, IAuthService authService)
         {
             _adminService = adminService;
+            _authService = authService;
         }
 
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginDto loginDto)
+        {
+            var validate = new ValidationErrors { Messages = new List<string>() };
+            if (string.IsNullOrEmpty(loginDto.Email))
+                validate.Messages.Add("Email is required");
+            if (string.IsNullOrEmpty(loginDto.Password))
+                validate.Messages.Add("Password is required");
+            if (validate.Messages.Any())
+                return BadRequest(validate);
+            var result = _adminService.Login(loginDto);
+            if (result != null)
+            {
+                var token = _authService.GetToken(result);
+                var adminResponse = new AdminResponse
+                {
+                    Id = result.Id,
+                    Email = result.Email,
+                    Rule = result.Rule.ToString()
+                };
+                return Ok(new { AdminResponse = adminResponse, Token = token });
+            }
+
+            else
+                return Unauthorized(new { message = "Invalid credentials" });
+        }
+
+        [Authorize]
         [HttpPost("admin")]
         public IActionResult CreateAdmin([FromBody] AdminDto adminDto)
         {
@@ -55,6 +86,7 @@ namespace Minimal.Api.Controllers
                 return Unauthorized(new { message = "Invalid credentials" });
         }
 
+        [Authorize]
         [HttpGet("admins")]
         public IActionResult GetAllAdmins([FromQuery] int? page)
         {
@@ -75,6 +107,7 @@ namespace Minimal.Api.Controllers
             return Ok(adminsResponse);
         }
 
+        [Authorize]
         [HttpGet("admin{id}")]
         public IActionResult GetAdminById(int id)
         {

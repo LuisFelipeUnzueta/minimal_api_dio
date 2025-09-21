@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Minimal.Api.Domain.Dto;
 using Minimal.Api.Domain.Entity;
 using Minimal.Api.Domain.Interfaces;
@@ -19,6 +20,7 @@ namespace Minimal.Api.Controllers
             _vehicleService = vehicleService;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetAll([FromQuery] int? page = 1, [FromQuery] string? name = null, [FromQuery] string? brand = null)
         {
@@ -27,6 +29,7 @@ namespace Minimal.Api.Controllers
             return Ok(vehicles);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -35,7 +38,8 @@ namespace Minimal.Api.Controllers
                 return NotFound();
             return Ok(vehicle);
         }
-
+        
+        [Authorize]
         [HttpPost]
         public IActionResult Create([FromBody] VehicleDto dto)
         {
@@ -54,6 +58,7 @@ namespace Minimal.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] VehicleDto dto)
         {
@@ -74,6 +79,7 @@ namespace Minimal.Api.Controllers
             return Ok(updated);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

@@ -39,9 +39,9 @@ namespace Minimal.Api.Domain.Service
             return admin;
         }
 
-        public Admin? Login(Admin admin)
+        public Admin? Login(LoginDto loginDto)
         {
-            var adminLogin = _context.Admins.SingleOrDefault(a => a.Email == admin.Email && a.Password == admin.Password);
+            var adminLogin = _context.Admins.SingleOrDefault(a => a.Email == loginDto.Email && a.Password == loginDto.Password);
             return adminLogin;
         }
 
