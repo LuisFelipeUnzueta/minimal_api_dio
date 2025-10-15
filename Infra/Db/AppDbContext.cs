@@ -7,7 +7,7 @@ namespace Minimal.Api.Infra.Db
     public class AppDbContext : DbContext
     {
         private readonly IConfiguration _configuration;
-        public AppDbContext(IConfiguration configuration)
+        public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration) : base(options)
         {
             _configuration = configuration;
         }
